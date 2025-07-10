@@ -2,9 +2,32 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { X, ArrowRight, Sparkles } from "lucide-react"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 const CardModal = ({ isOpen, onClose, feature }) => {
+  // State for background image loading
+  const [backgroundImage, setBackgroundImage] = useState('linear-gradient(135deg, rgba(0, 109, 119, 0.3) 0%, rgba(163, 230, 53, 0.3) 100%)')
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  // Load image when modal opens or feature changes
+  useEffect(() => {
+    if (isOpen && feature?.image) {
+      setIsLoaded(false)
+      setBackgroundImage('linear-gradient(135deg, rgba(0, 109, 119, 0.3) 0%, rgba(163, 230, 53, 0.3) 100%)')
+      
+      const img = new Image()
+      img.onload = () => {
+        setBackgroundImage(`url(${feature.image})`)
+        setIsLoaded(true)
+      }
+      img.onerror = () => {
+        console.warn(`Failed to load image: ${feature.image}`)
+        setIsLoaded(true)
+      }
+      img.src = feature.image
+    }
+  }, [isOpen, feature?.image])
+
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -70,13 +93,18 @@ const CardModal = ({ isOpen, onClose, feature }) => {
             className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-3xl shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Full Background Image */}
+            {/* Lazy-loaded Background Image */}
             <div 
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
               style={{
-                backgroundImage: `url(${feature.image})`,
+                backgroundImage,
               }}
             />
+
+            {/* Loading placeholder */}
+            {!isLoaded && (
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 animate-pulse" />
+            )}
 
             {/* Fallback gradient background */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-accent/30" />

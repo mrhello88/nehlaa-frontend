@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { X, ArrowRight, CheckCircle } from "lucide-react"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 // Custom scrollbar styles
 const scrollbarStyles = `
@@ -38,6 +38,32 @@ const scrollbarStyles = `
 `
 
 const FeatureModal = ({ isOpen, onClose, showcaseItems, selectedShowcase }) => {
+  // Get the selected item safely
+  const selectedItem = showcaseItems?.[selectedShowcase]
+  
+  // State for background image loading
+  const [backgroundImage, setBackgroundImage] = useState('linear-gradient(135deg, rgba(0, 109, 119, 0.2) 0%, rgba(163, 230, 53, 0.2) 100%)')
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  // Load image when modal opens or selectedItem changes
+  useEffect(() => {
+    if (isOpen && selectedItem?.image) {
+      setIsLoaded(false)
+      setBackgroundImage('linear-gradient(135deg, rgba(0, 109, 119, 0.2) 0%, rgba(163, 230, 53, 0.2) 100%)')
+      
+      const img = new Image()
+      img.onload = () => {
+        setBackgroundImage(`url(${selectedItem.image})`)
+        setIsLoaded(true)
+      }
+      img.onerror = () => {
+        console.warn(`Failed to load image: ${selectedItem.image}`)
+        setIsLoaded(true)
+      }
+      img.src = selectedItem.image
+    }
+  }, [isOpen, selectedItem?.image])
+
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -82,8 +108,6 @@ const FeatureModal = ({ isOpen, onClose, showcaseItems, selectedShowcase }) => {
   }, [isOpen])
 
   if (!showcaseItems || selectedShowcase === null || selectedShowcase === undefined) return null
-
-  const selectedItem = showcaseItems[selectedShowcase]
   if (!selectedItem) return null
 
   return (
@@ -104,13 +128,19 @@ const FeatureModal = ({ isOpen, onClose, showcaseItems, selectedShowcase }) => {
             className="relative w-full max-w-6xl h-[90vh] rounded-3xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Background */}
+            {/* Lazy-loaded Background */}
             <div 
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
               style={{
-                backgroundImage: `url(${selectedItem.image})`,
+                backgroundImage,
               }}
             />
+            
+            {/* Loading placeholder */}
+            {!isLoaded && (
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 animate-pulse" />
+            )}
+            
             <div className="absolute inset-0 bg-black/50" />
 
             {/* Close Button */}
@@ -138,11 +168,15 @@ const FeatureModal = ({ isOpen, onClose, showcaseItems, selectedShowcase }) => {
                   className="w-full max-w-md"
                 >
                   <div 
-                    className="aspect-video bg-cover bg-center bg-no-repeat rounded-xl shadow-2xl border-2 border-white/20"
+                    className={`aspect-video bg-cover bg-center bg-no-repeat rounded-xl shadow-2xl border-2 border-white/20 transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
                     style={{
-                      backgroundImage: `url(${selectedItem.image})`,
+                      backgroundImage,
                     }}
-                  />
+                  >
+                    {!isLoaded && (
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 animate-pulse rounded-xl" />
+                    )}
+                  </div>
                 </motion.div>
               </div>
 
@@ -157,11 +191,15 @@ const FeatureModal = ({ isOpen, onClose, showcaseItems, selectedShowcase }) => {
                     className="w-full max-w-2xl"
                   >
                     <div 
-                      className="aspect-video bg-cover bg-center bg-no-repeat rounded-2xl shadow-2xl border-4 border-white/20"
+                      className={`aspect-video bg-cover bg-center bg-no-repeat rounded-2xl shadow-2xl border-4 border-white/20 transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
                       style={{
-                        backgroundImage: `url(${selectedItem.image})`,
+                        backgroundImage,
                       }}
-                    />
+                    >
+                      {!isLoaded && (
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 animate-pulse rounded-2xl" />
+                      )}
+                    </div>
                   </motion.div>
                 </div>
 

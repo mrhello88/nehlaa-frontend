@@ -2,8 +2,14 @@
 
 import { motion } from "framer-motion"
 import { ArrowRight, CheckCircle, Shield, Globe, Zap } from "lucide-react"
+import { useLazyBackgroundImage } from "../../../hooks/useLazyImage"
 
 const Footer = () => {
+  // Lazy load the background image
+  const { elementRef, backgroundImage, isLoaded } = useLazyBackgroundImage('/cta-section.jpg', {
+    placeholder: 'linear-gradient(135deg, rgba(0, 109, 119, 0.8) 0%, rgba(163, 230, 53, 0.6) 100%)'
+  })
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -44,14 +50,19 @@ const Footer = () => {
   }
 
   return (
-    <footer id="footer" className="py-32 relative overflow-hidden">
-      {/* Full Background Image */}
+    <footer ref={elementRef} id="footer" className="py-32 relative overflow-hidden">
+      {/* Lazy-loaded Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
         style={{
-          backgroundImage: `url('/cta-section.jpg')`,
+          backgroundImage,
         }}
       />
+      
+      {/* Loading placeholder */}
+      {!isLoaded && (
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/60 to-accent/40 animate-pulse" />
+      )}
       
       {/* Dark Overlay for Text Readability */}
       <div className="absolute inset-0 bg-black/70" />

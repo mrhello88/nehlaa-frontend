@@ -26,6 +26,9 @@ import {
 } from "lucide-react"
 import CardModal from "./cardModal/page"
 import FeatureModal from "./featureModal/page"
+import FeatureCard from "./cards/FeatureCard"
+import ShowcaseCard from "./cards/ShowcaseCard"
+import TestimonialCard from "./cards/TestimonialCard"
 
 const HomePage = () => {
   const containerRef = useRef(null)
@@ -237,10 +240,7 @@ const HomePage = () => {
 
   return (
     <div ref={containerRef} className="min-h-screen relative overflow-hidden">
-
-
-
-             {/* Hero Section */}
+        {/* Hero Section */}
        <motion.section id="hero" ref={heroRef} className="relative min-h-screen flex items-center justify-start overflow-hidden py-16 md:pt-20 lg:pt-24">
          {/* Fallback Background */}
          <div className="hero-bg-fallback" />
@@ -428,88 +428,13 @@ const HomePage = () => {
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {features.map((feature, index) => (
-              <motion.div
+              <FeatureCard 
                 key={index}
-                variants={{
-                  hidden: { opacity: 0, y: 100, scale: 0.8 },
-                  visible: {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    transition: {
-                      type: "spring",
-                      stiffness: 100,
-                      damping: 15,
-                      delay: feature.delay,
-                    },
-                  },
-                }}
-                whileHover="hover"
-                className="group relative perspective-1000"
-              >
-                <motion.div
-                  variants={cardHoverVariants}
-                  className="relative h-96 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 transform-style-3d"
-                >
-                  {/* Full House Image Background */}
-                  <div 
-                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                    style={{
-                      backgroundImage: `url(${feature.image})`,
-                    }}
-                  />
-
-
-                  {/* Dark Overlay for Text Readability */}
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-all duration-300" />
-
-                  {/* Content */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-6 z-10">
-                    {/* Title */}
-                    <motion.h3
-                      whileHover={{ scale: 1.05 }}
-                      className="text-2xl font-bold text-white mb-4 group-hover:text-accent transition-colors"
-                    >
-                      {feature.title}
-                    </motion.h3>
-
-                    {/* Glass Background Button */}
-                    <motion.button
-                      whileHover={{
-                        scale: 1.02,
-                        backgroundColor: "rgba(224, 242, 241, 0.15)",
-                        backdropFilter: "blur(20px)",
-                      }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => openModal(feature)}
-                      className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-2 rounded-full font-medium text-sm transition-all duration-300 hover:border-accent/50 hover:bg-white/15 shadow-lg w-fit flex items-center group/btn"
-                      style={{
-                        backdropFilter: "blur(16px)",
-                        WebkitBackdropFilter: "blur(16px)",
-                      }}
-                    >
-                      Learn More About This Feature
-                      <motion.div 
-                        animate={{ x: [0, 3, 0] }}
-                        transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
-                        className="ml-2"
-                      >
-                        <ArrowRight className="w-4 h-4 group-hover/btn:text-accent transition-colors" />
-                      </motion.div>
-                    </motion.button>
-
-                    {/* Hover Effect Particles */}
-                    <motion.div initial={{ opacity: 0 }} whileHover={{ opacity: 1 }} className="absolute top-4 right-4">
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                      >
-                        <Sparkles className="w-6 h-6 text-accent" />
-                      </motion.div>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              </motion.div>
+                feature={feature}
+                index={index}
+                onOpenModal={openModal}
+                cardHoverVariants={cardHoverVariants}
+              />
             ))}
           </motion.div>
         </div>
@@ -543,109 +468,12 @@ const HomePage = () => {
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16"
           >
             {showcaseItems.map((item, index) => (
-              <motion.div
+              <ShowcaseCard 
                 key={item.id}
-                variants={{
-                  hidden: { opacity: 0, y: 50, scale: 0.9 },
-                  visible: {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    transition: {
-                      type: "spring",
-                      stiffness: 100,
-                      damping: 15,
-                      delay: index * 0.1,
-                    },
-                  },
-                }}
-                whileHover={{
-                  y: -10,
-                  scale: 1.05,
-                  rotateY: 5,
-                  transition: { duration: 0.3 }
-                }}
-                onClick={() => selectShowcase(index)}
-                className="group relative cursor-pointer perspective-1000"
-              >
-                <motion.div
-                  className={`relative h-80 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 bg-gradient-to-br ${item.color}`}
-                  whileHover={{ rotateX: 5 }}
-                >
-                  {/* Background Image */}
-                  <div 
-                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                    style={{
-                      backgroundImage: `url(${item.image})`,
-                    }}
-                  />
-                  
-                  {/* Fallback Background */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20" />
-
-                  {/* Content */}
-                  <div className="relative z-10 p-6 h-full flex flex-col justify-between">
-                    {/* Icon */}
-                    <motion.div
-                      whileHover={{ rotate: 360, scale: 1.2 }}
-                      transition={{ duration: 0.6 }}
-                      className="w-16 h-16 bg-black/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-4 shadow-lg"
-                    >
-                      <item.icon className="w-8 h-8 text-white" />
-                    </motion.div>
-
-                    {/* Text Content */}
-                    <div className="flex-1 flex flex-col justify-end">
-                      <motion.p 
-                        className="text-white/90 text-sm font-medium mb-2"
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2 }}
-                      >
-                        {item.subtitle}
-                      </motion.p>
-                      <motion.h3 
-                        className="text-white text-xl font-bold mb-4"
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 }}
-                      >
-                        {item.title}
-                      </motion.h3>
-
-                      {/* Interactive Button */}
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="bg-black/30 backdrop-blur-md border border-white/30 text-white px-4 py-2 rounded-xl font-medium text-sm transition-all duration-300 hover:bg-black/40 shadow-lg w-fit flex items-center group/btn"
-                      >
-                        Explore
-                        <motion.div 
-                          animate={{ x: [0, 3, 0] }}
-                          transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
-                          className="ml-2"
-                        >
-                          <ArrowRight className="w-4 h-4 group-hover/btn:text-accent transition-colors" />
-                        </motion.div>
-                      </motion.button>
-                    </div>
-
-                    {/* Hover Particles */}
-                    <motion.div 
-                      initial={{ opacity: 0 }} 
-                      whileHover={{ opacity: 1 }} 
-                      className="absolute top-4 right-4"
-                    >
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                      >
-                        <Sparkles className="w-6 h-6 text-white/60" />
-                      </motion.div>
-                    </motion.div>
-                </div>
-                </motion.div>
-              </motion.div>
+                item={item}
+                index={index}
+                onSelectShowcase={selectShowcase}
+              />
             ))}
           </motion.div>
           
@@ -720,155 +548,11 @@ const HomePage = () => {
             className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {testimonials.map((testimonial, index) => (
-              <motion.div
+              <TestimonialCard 
                 key={index}
-                variants={{
-                  hidden: { opacity: 0, y: 100, scale: 0.8 },
-                  visible: {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    transition: {
-                      type: "spring",
-                      stiffness: 100,
-                      damping: 15,
-                      delay: index * 0.1,
-                    },
-                  },
-                }}
-                whileHover={{ 
-                  y: -15, 
-                  scale: 1.03,
-                  rotateY: 5,
-                  transition: { duration: 0.3 }
-                }}
-                className="group relative perspective-1000"
-              >
-                                 <motion.div
-                   className="glass-card rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform-style-3d relative overflow-hidden h-full flex flex-col"
-                   whileHover={{ rotateX: 5 }}
-                 >
-                  {/* Gradient Background Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
-                  {/* Quote Icon */}
-                  <motion.div
-                    initial={{ scale: 0, rotate: -180 }}
-                    whileInView={{ scale: 1, rotate: 0 }}
-                    transition={{ delay: 0.3 + index * 0.1, type: "spring", stiffness: 200 }}
-                    className="absolute top-6 right-6 w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center"
-                  >
-                                         <motion.div
-                       animate={{ rotate: [0, 10, -10, 0] }}
-                       transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-                       className="text-2xl text-accent font-bold"
-                     >
-                       &ldquo;
-                     </motion.div>
-                  </motion.div>
-
-                                     {/* Rating Stars */}
-                   <motion.div 
-                     initial={{ opacity: 0, x: -20 }}
-                     whileInView={{ opacity: 1, x: 0 }}
-                     transition={{ delay: 0.4 + index * 0.1 }}
-                     className="flex items-center mb-6"
-                   >
-                     {[...Array(testimonial.rating)].map((_, i) => (
-                       <motion.div
-                         key={i}
-                         initial={{ scale: 0, rotate: -180 }}
-                         whileInView={{ scale: 1, rotate: 0 }}
-                         transition={{ delay: 0.5 + index * 0.1 + i * 0.05, type: "spring" }}
-                         whileHover={{ scale: 1.2, rotate: 360 }}
-                         className="text-accent text-xl mr-1"
-                       >
-                         ★
-                       </motion.div>
-                     ))}
-                   </motion.div>
-
-                   {/* Testimonial Text */}
-                   <motion.div 
-                     initial={{ opacity: 0, y: 20 }}
-                     whileInView={{ opacity: 1, y: 0 }}
-                     transition={{ delay: 0.6 + index * 0.1 }}
-                     className="flex-1 flex items-center mb-8"
-                   >
-                     <p className="text-gray-700 text-lg leading-relaxed font-medium relative z-10">
-                       {testimonial.text}
-                     </p>
-            </motion.div>
-            
-                   {/* Client Info */}
-                   <motion.div 
-                     initial={{ opacity: 0, y: 20 }}
-                     whileInView={{ opacity: 1, y: 0 }}
-                     transition={{ delay: 0.7 + index * 0.1 }}
-                     className="flex items-center mt-auto"
-                   >
-                    {/* Avatar */}
-                    <motion.div
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      className="relative"
-                    >
-                      <div 
-                        className="w-16 h-16 rounded-full bg-cover bg-center bg-no-repeat shadow-lg border-3 border-white"
-                        style={{
-                          backgroundImage: `url(${testimonial.avatar})`,
-                        }}
-                      />
-            <motion.div 
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, delay: index * 0.5 }}
-                        className="absolute -bottom-1 -right-1 w-6 h-6 bg-accent rounded-full flex items-center justify-center"
-                      >
-                        <CheckCircle className="w-4 h-4 text-white" />
-                      </motion.div>
-                    </motion.div>
-
-                    {/* Name and Role */}
-                    <div className="ml-4">
-                      <motion.h4 
-                        whileHover={{ scale: 1.05, color: "#006d77" }}
-                        className="font-bold text-gray-900 text-lg"
-                      >
-                        {testimonial.name}
-                      </motion.h4>
-                      <motion.p 
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: 0.8 + index * 0.1 }}
-                        className="text-gray-600 font-medium"
-                      >
-                        {testimonial.role}
-                      </motion.p>
-                      <motion.p 
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: 0.9 + index * 0.1 }}
-                        className="text-accent font-semibold text-sm"
-                      >
-                        {testimonial.company}
-                      </motion.p>
-              </div>
-                  </motion.div>
-
-                  {/* Hover Effect Particles */}
-                  <motion.div 
-                    initial={{ opacity: 0 }} 
-                    whileHover={{ opacity: 1 }} 
-                    className="absolute top-4 left-4"
-                  >
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                    >
-                      <Sparkles className="w-5 h-5 text-accent/60" />
-                    </motion.div>
-                  </motion.div>
-                </motion.div>
-              </motion.div>
+                testimonial={testimonial}
+                index={index}
+              />
             ))}
           </motion.div>
 
