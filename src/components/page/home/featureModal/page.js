@@ -68,11 +68,6 @@ const FeatureModal = ({ isOpen, onClose, showcaseItems, selectedShowcase }) => {
     }
   }, [isOpen, onClose])
 
-  if (!showcaseItems || selectedShowcase === null || selectedShowcase === undefined) return null
-
-  const selectedItem = showcaseItems[selectedShowcase]
-  if (!selectedItem) return null
-
   // Inject custom scrollbar styles
   useEffect(() => {
     if (isOpen) {
@@ -85,6 +80,11 @@ const FeatureModal = ({ isOpen, onClose, showcaseItems, selectedShowcase }) => {
       }
     }
   }, [isOpen])
+
+  if (!showcaseItems || selectedShowcase === null || selectedShowcase === undefined) return null
+
+  const selectedItem = showcaseItems[selectedShowcase]
+  if (!selectedItem) return null
 
   return (
     <AnimatePresence>
